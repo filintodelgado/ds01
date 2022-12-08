@@ -2,12 +2,11 @@
 
 # importação de modulo
 from lib.color import colorir
-from lib.utils import center
 
 branco = "○" # o caracter que será preenchido no espaço em branco
 jogado = "●" # o caracter que será monstrado na tela (com cores)
 
-coresBoard = [
+cores = [
   "azul",    # cor de jogador 1 [0]
   "verde",   # cor de jogador 2 [1]
   "vermelho" # cor de jogada vencedora
@@ -31,36 +30,22 @@ def printBoard(board: list, encontrados=[]) -> None:
   """
   Imprime na tela a board formatado
 
-  Caso seja fornecido 'entrados' imprime estes 
+  Caso seja fodrnecido 'entrados' imprime estes 
   """
-  global coresBoard
-
-  linhas = ""
-  indicações = ""
-
-  # imprime indicação de colunas
-  for i in range(len(board[0])): 
-    indicações += f' {i+1} '
-  
-  print(center("-"*len(indicações)))
-  print(center(indicações))
-  print(center("-"*len(indicações)))
-
+  global cores
 
   for i in range(len(board)):
-    linhas = ""
     for j in range(len(board[i])):
       casa = board[i][j]
       if encontrados: # caso seja fornecido os resultados encontrados
         for posição in encontrados:
           if posição[0] == i and posição[1] == j:
-            casa = colorir(jogado, coresBoard[2])
+            casa = colorir(jogado, cores[2])
       if type(casa) == int:
         # muda a casa para ser imprimido a cores e jogado
-        casa = colorir(jogado, coresBoard[casa]) # aplica cores
-      linhas+=f' {casa} '
-
-    print(center(linhas, 21))
+        casa = colorir(jogado, cores[casa]) # aplica cores
+      print(f' {casa} ', end="")
+    print()
 
 
 def jogar(board: list, coluna: int, jogador: int) -> any:
@@ -87,22 +72,19 @@ def vertical(board: list, jogadas: int) -> bool:
   """
   global branco
 
-  last = 0         # a ultima ficha encontrada
-  encontrados = [] # guarda as posições encontradas 
+  last = 0
+  encontrados = []
   for i in range(len(board)):
     for j in range(len(board[0])):
-      if board[i][j] == last and board[i][j] != branco: # caso a ficha seja igual a anterio e não seja um espaço em branco
-        encontrados.append([i, j]) # adciona aos encontrados
+      if board[i][j] == last and board[i][j] != branco:
+        encontrados.append([i, j])
 
-        if len(encontrados) == jogadas: # encontramos fichas suficientes
+        if len(encontrados) == jogadas:
           return encontrados
       else:
         encontrados = []
         encontrados.append([i, j])
         last = board[i][j]
-    
-    encontrados = []
-    last = 0
       
   return False
 
@@ -129,8 +111,6 @@ def horizontal(board: list, jogadas: int) -> bool:
         encontrados = []
         encontrados.append([i, j])
         last = board[i][j]
-    encontrados = []
-    last = 0
       
   return False
 
@@ -169,8 +149,6 @@ def diagonal(board: list, jogadas: int) -> bool:
       coluna += 1
     start += 1
     coluna = start
-    encontrados = []
-    last = 0
   
   # agora verificando por linhas
   start = 0
@@ -192,28 +170,7 @@ def diagonal(board: list, jogadas: int) -> bool:
         last = casa
       
       coluna += 1
-    last = 0
-    encontrados = []
     start += 1
     coluna = 0
 
-  return False
-
-
-def verificarVencidor(board: list, jogadas: int) -> bool:
-  """
-  Verifica se existe um vencedor na vertical, horizontal e diagonal
-
-  Retorna as posições ou False se não existe um vencedor
-  """
-
-  if vertical(board, jogadas):
-    return vertical(board, jogadas)
-  
-  if horizontal(board, jogadas):
-    return horizontal(board, jogadas)
-  
-  if diagonal(board, jogadas):
-    return diagonal(board, jogadas)
-  
   return False
