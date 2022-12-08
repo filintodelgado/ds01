@@ -5,17 +5,27 @@
 # importação de modulos
 from lib.board import *
 from lib.utils import *
+from lib.color import cores
+
+# remove qualquer coloração que já exista no seu terminal
+print(cores["end"], end="")
 
 # Informações da board
-boardLinhas  = 6
-boardColunas = 7
+boardLinhas      = 6
+boardColunas     = 7
+numeroDeJogadas  = 4 # numero de fichas seguidas necessarias para vencer o jogo
 
 jogadasPossiveis = boardLinhas * boardColunas # o numero de jogadas possivel na board
 jogadasRestantes = jogadasPossiveis # no inicio do jogo as jogadas restantes são as mesmas das jogadas possiveis
+jogadasEfetuadas = 0 
 
 jogadores = [] # vai conter os nomes do jogadores
 jogador = 0 # o jogador que está a jogar
 
 board = criarBoard(boardLinhas, boardColunas)
 
-jo
+board = jogar(board, 1, 1)
+board = jogar(board, 1, 1)
+board = jogar(board, 1, 1)
+board = jogar(board, 1, 1)
+printBoard(board, horizontal(board, 4))

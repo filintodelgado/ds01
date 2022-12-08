@@ -8,17 +8,15 @@ cores = {
   "vermelho": "\033[91m",
   "verde"   : "\033[92m",
   "amarelo" : "\033[93m",
-  "azul"    : "\033[94m"
+  "azul"    : "\033[94m",
+  "end"     : "\033[0m"
 }
 
 
-def colorir(mensagem: str, cor: cores):
+def colorir(mensagem: str, cor: str):
   """
   Devolve a mensagem colirido na cor desejada
   """
   global cores
 
-  return (cores[cor] + mensagem + cores[cor])
-
-
-print(colorir("mensagem ", "azul"))
+  return (cores[cor] + mensagem + cores["end"])
