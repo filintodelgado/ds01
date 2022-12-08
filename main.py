@@ -15,3 +15,7 @@ jogadasRestantes = jogadasPossiveis # no inicio do jogo as jogadas restantes sã
 
 jogadores = [] # vai conter os nomes do jogadores
 jogador = 0 # o jogador que está a jogar
+
+board = criarBoard(boardLinhas, boardColunas)
+
+jo
