@@ -24,8 +24,11 @@ jogador = 0 # o jogador que está a jogar
 
 board = criarBoard(boardLinhas, boardColunas)
 
-board = jogar(board, 1, 1)
-board = jogar(board, 1, 1)
-board = jogar(board, 1, 1)
-board = jogar(board, 1, 1)
-printBoard(board, horizontal(board, 4))
+
+def menu():
+  print("Jogo quatro em linha"+"="*10)
+
+while True:
+  
+
+  break

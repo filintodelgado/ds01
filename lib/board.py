@@ -7,8 +7,8 @@ branco = "○" # o caracter que será preenchido no espaço em branco
 jogado = "●" # o caracter que será monstrado na tela (com cores)
 
 cores = [
-  "azul",    # cor de jogador 1
-  "verde",   # cor de jogador 2
+  "azul",    # cor de jogador 1 [0]
+  "verde",   # cor de jogador 2 [1]
   "vermelho" # cor de jogada vencedora
 ]
 
@@ -41,22 +41,21 @@ def printBoard(board: list, encontrados=[]) -> None:
         for posição in encontrados:
           if posição[0] == i and posição[1] == j:
             casa = colorir(jogado, cores[2])
-      elif type(casa) == int:
+      if type(casa) == int:
         # muda a casa para ser imprimido a cores e jogado
         casa = colorir(jogado, cores[casa]) # aplica cores
       print(f' {casa} ', end="")
     print()
 
 
-def jogar(board: list, coluna: int, jogador: int, vencedor=False) -> any:
+def jogar(board: list, coluna: int, jogador: int) -> any:
   """
   Joga na primeira casa na disponivel na coluna de baixo para cima
 
   O numero de jogador que será preenchido
   Caso a jogado não é possivel retorna false
-  Caso 
   """
-  for i in range(len(board)-1, 0, -1): # começamos por verificar de traz para frente
+  for i in range(len(board)-1, -1, -1): # começamos por verificar de traz para frente
     if board[i][coluna] == branco:
       board[i][coluna] = jogador
       return board
@@ -115,3 +114,63 @@ def horizontal(board: list, jogadas: int) -> bool:
       
   return False
 
+
+def diagonal(board: list, jogadas: int) -> bool:
+  """
+  Verifica se existe uma jogada vencedora na diagonal
+
+  retorna false caso não encontre 
+  ou um array com as posições encontradas
+  """
+  global branco
+
+  last = 0
+  encontrados = []
+  start = 0
+  coluna = start
+  
+  # primeiro verifica por colunas
+  while start < len(board[0]):
+    for i in range(len(board)):
+      if coluna == len(board[0]):
+        break
+      casa = board[i][coluna]
+      if casa == last and casa != branco:
+        encontrados.append([i, coluna])
+
+        if len(encontrados) == jogadas:
+          return encontrados
+      else:
+        encontrados = []
+        encontrados.append([i, coluna])
+
+        last = casa
+      
+      coluna += 1
+    start += 1
+    coluna = start
+  
+  # agora verificando por linhas
+  start = 0
+  coluna = 0
+  while start < len(board):
+    for i in range(start, len(board)):
+      if coluna == len(board[0]):
+        break
+      casa = board[i][coluna]
+      if casa == last and casa != branco:
+        encontrados.append([i, coluna])
+
+        if len(encontrados) == jogadas:
+          return encontrados
+      else:
+        encontrados = []
+        encontrados.append([i, coluna])
+
+        last = casa
+      
+      coluna += 1
+    start += 1
+    coluna = 0
+
+  return False
