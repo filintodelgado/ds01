@@ -1,5 +1,7 @@
 # um conjunto de funções utilitarios genericos
 
+# importação de modulos
+from os import get_terminal_size
 
 def get_str(prompt: str, error_prompt: str, min_lenght: int) -> str:
   """
@@ -40,3 +42,18 @@ def get_int(max: int, min: int, prompt: str, error_prompt: str) -> str:
       print(error_prompt)
     else:
       return number
+
+
+def center(message:str, size=False) -> None:
+  """
+  Centraliza uma string levando em conta o tamanho do termina e da string ou do size caso especificado
+  """
+  terminal_size = int(get_terminal_size().columns) # tamanho do terminal
+  message_size = size if size else len(message)
+
+  if message_size >= terminal_size:
+    return message
+
+  terminal_size = int(terminal_size - message_size)
+
+  return (" "*int(terminal_size/2))+message+(" "*(int(terminal_size/2)))
