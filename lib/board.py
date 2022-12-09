@@ -149,7 +149,7 @@ def diagonal(board: list, jogadas: int) -> bool:
   start = 0
   coluna = start
   
-  # primeiro verifica por colunas
+  # primeiro verifica por colunas de esquera para a direita
   while start < len(board[0]):
     for i in range(len(board)):
       if coluna == len(board[0]):
@@ -172,7 +172,36 @@ def diagonal(board: list, jogadas: int) -> bool:
     encontrados = []
     last = 0
   
-  # agora verificando por linhas
+
+  # de direita para a esquerda
+  start = len(board[0])
+  coluna = start
+  encontrados = []
+  last = 0
+  
+  while start > 0:
+    for i in range(len(board)):
+      if coluna == len(board[0]):
+        break
+      casa = board[i][coluna]
+      if casa == last and casa != branco:
+        encontrados.append([i, coluna])
+
+        if len(encontrados) == jogadas:
+          return encontrados
+      else:
+        encontrados = []
+        encontrados.append([i, coluna])
+
+        last = casa
+      
+      coluna -= 1
+    start -= 1
+    coluna = start
+    encontrados = []
+    last = 0
+  
+  # agora verificando por linhas de esquerda para direita
   start = 0
   coluna = 0
   while start < len(board):
@@ -192,6 +221,34 @@ def diagonal(board: list, jogadas: int) -> bool:
         last = casa
       
       coluna += 1
+    last = 0
+    encontrados = []
+    start += 1
+    coluna = 0
+
+  # por ultimo verificando por linhas de direita para esquerda
+  start = 0
+  coluna = start
+  encontrados = []
+  last = 0
+
+  while start < len(board):
+    for i in range(start, len(board)):
+      if coluna == len(board[0]):
+        break
+      casa = board[i][coluna]
+      if casa == last and casa != branco:
+        encontrados.append([i, coluna])
+
+        if len(encontrados) == jogadas:
+          return encontrados
+      else:
+        encontrados = []
+        encontrados.append([i, coluna])
+
+        last = casa
+      
+      coluna -= 1
     last = 0
     encontrados = []
     start += 1
