@@ -143,11 +143,11 @@ def printVencedor():
 while True:
   iniciar()
   # Enquanto não existir um vencedor ou ainda há jogadas restantes
-  while not verificarVencidor(board, numeroVencedor) and jogadasRestantes:
+  while not encontrarSequencia(board, numeroVencedor) and jogadasRestantes:
     proximaJogada() # faz uma jogada
   
-  if verificarVencidor(board, numeroVencedor):
-    encontrados = verificarVencidor(board, numeroVencedor)
+  if encontrarSequencia(board, numeroVencedor):
+    encontrados = encontrarSequencia(board, numeroVencedor)
     printVencedor()
   else:
     print("Jogo terminado em impate")

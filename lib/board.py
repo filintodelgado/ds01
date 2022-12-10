@@ -78,7 +78,7 @@ def jogar(board: list, coluna: int, jogador: int) -> any:
   return False
 
 
-def vertical(board: list, jogadas: int) -> bool:
+def vertical(board: list, sequencia: int) -> bool:
   """
   Verifica se existe uma jogada vencedora na vertical
 
@@ -94,7 +94,7 @@ def vertical(board: list, jogadas: int) -> bool:
       if board[i][j] == last and board[i][j] != branco: # caso a ficha seja igual a anterio e não seja um espaço em branco
         encontrados.append([i, j]) # adciona aos encontrados
 
-        if len(encontrados) == jogadas: # encontramos fichas suficientes
+        if len(encontrados) == sequencia: # encontramos fichas suficientes
           return encontrados
       else:
         encontrados = []
@@ -107,7 +107,7 @@ def vertical(board: list, jogadas: int) -> bool:
   return False
 
 
-def horizontal(board: list, jogadas: int) -> bool:
+def horizontal(board: list, sequencia: int) -> bool:
   """
   Verifica se existe uma jogada vencedora na horizontal
 
@@ -123,7 +123,7 @@ def horizontal(board: list, jogadas: int) -> bool:
       if board[i][j] == last and board[i][j] != branco:
         encontrados.append([i, j])
 
-        if len(encontrados) == jogadas:
+        if len(encontrados) == sequencia:
           return encontrados
       else:
         encontrados = []
@@ -135,12 +135,9 @@ def horizontal(board: list, jogadas: int) -> bool:
   return False
 
 
-def diagonal(board: list, jogadas: int) -> bool:
+def diagonal(board: list, sequencia: int) -> bool:
   """
-  Verifica se existe uma jogada vencedora na diagonal
-
-  retorna false caso não encontre 
-  ou um array com as posições encontradas
+  Retorna as 'posições' da primeira 'sequencia' encontrada na diagonal, ou 'False' caso não encontre
   """
   global branco
 
@@ -149,16 +146,18 @@ def diagonal(board: list, jogadas: int) -> bool:
   start = 0
   coluna = start
   
-  # primeiro verifica por colunas de esquera para a direita
-  while start < len(board[0]):
-    for i in range(len(board)):
-      if coluna == len(board[0]):
-        break
+  # primeiro verifica por colunas de esquerda para a direita
+  #   a cada iteração começamos na proxima coluna
+  #   ●○○○○○○ -> ○●○○○○○ e assim por diante até a ultima coluna
+  while start < len(board[0]): # enquanto ainda não chegar a ultima coluna
+    for i in range(len(board)): # para cada linha
+      if coluna == len(board[0]): # temos que verificar se o index de colunas não é maior que o numero de colunas
+        break # se for vamos sair do loop
       casa = board[i][coluna]
       if casa == last and casa != branco:
         encontrados.append([i, coluna])
 
-        if len(encontrados) == jogadas:
+        if len(encontrados) == sequencia: # já encontramos uma sequencia
           return encontrados
       else:
         encontrados = []
@@ -167,52 +166,28 @@ def diagonal(board: list, jogadas: int) -> bool:
         last = casa
       
       coluna += 1
-    start += 1
+    start += 1 # passa para a proxima coluna
     coluna = start
+    # reseta as variaveis
     encontrados = []
     last = 0
   
-
-  # de direita para a esquerda
-  start = len(board[0])
-  coluna = start
-  encontrados = []
-  last = 0
-  
-  while start > 0:
-    for i in range(len(board)):
+  # verificando por linhas de esquerda para direita
+  # a cada iteração começamos na proxima linha
+  # -----1º---- | -----2º----
+  # 1 - ●○○○○○○ | 1 - ○○○○○○○
+  # 2 - ○●○○○○○ | 2 - ●○○○○○○
+  start = 0  # começando da primeira linha
+  coluna = 0 # e da primeira coluna
+  while start < len(board): # enquanto não for a ultima linha
+    for i in range(start, len(board)): # para cada linha
       if coluna == len(board[0]):
         break
       casa = board[i][coluna]
       if casa == last and casa != branco:
         encontrados.append([i, coluna])
 
-        if len(encontrados) == jogadas:
-          return encontrados
-      else:
-        encontrados = []
-        encontrados.append([i, coluna])
-
-        last = casa
-      
-      coluna -= 1
-    start -= 1
-    coluna = start
-    encontrados = []
-    last = 0
-  
-  # agora verificando por linhas de esquerda para direita
-  start = 0
-  coluna = 0
-  while start < len(board):
-    for i in range(start, len(board)):
-      if coluna == len(board[0]):
-        break
-      casa = board[i][coluna]
-      if casa == last and casa != branco:
-        encontrados.append([i, coluna])
-
-        if len(encontrados) == jogadas:
+        if len(encontrados) == sequencia:
           return encontrados
       else:
         encontrados = []
@@ -221,56 +196,26 @@ def diagonal(board: list, jogadas: int) -> bool:
         last = casa
       
       coluna += 1
+    start += 1 # proxima linha
+    coluna = 0 # começamos na primeira coluna
     last = 0
     encontrados = []
-    start += 1
-    coluna = 0
-
-  # por ultimo verificando por linhas de direita para esquerda
-  start = 0
-  coluna = start
-  encontrados = []
-  last = 0
-
-  while start < len(board):
-    for i in range(start, len(board)):
-      if coluna == len(board[0]):
-        break
-      casa = board[i][coluna]
-      if casa == last and casa != branco:
-        encontrados.append([i, coluna])
-
-        if len(encontrados) == jogadas:
-          return encontrados
-      else:
-        encontrados = []
-        encontrados.append([i, coluna])
-
-        last = casa
-      
-      coluna -= 1
-    last = 0
-    encontrados = []
-    start += 1
-    coluna = 0
-
-  return False
 
 
-def verificarVencidor(board: list, jogadas: int) -> bool:
+def encontrarSequencia(board: list, sequencia: int) -> bool:
   """
-  Verifica se existe um vencedor na vertical, horizontal e diagonal
+  Verifica se existe uma sequencia de 'sequencia' na vertical, horizontal e diagonal
 
   Retorna as posições ou False se não existe um vencedor
   """
 
-  if vertical(board, jogadas):
-    return vertical(board, jogadas)
+  if vertical(board, sequencia):
+    return vertical(board, sequencia)
   
-  if horizontal(board, jogadas):
-    return horizontal(board, jogadas)
+  if horizontal(board, sequencia):
+    return horizontal(board, sequencia)
   
-  if diagonal(board, jogadas):
-    return diagonal(board, jogadas)
+  if diagonal(board, sequencia):
+    return diagonal(board, sequencia)
   
   return False
