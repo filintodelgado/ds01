@@ -141,15 +141,15 @@ def diagonal(board: list, sequencia: int) -> bool:
   """
   global branco
 
-  last = 0
-  encontrados = []
-  start = 0
-  coluna = start
-  
   # primeiro verifica por colunas de esquerda para a direita
   #   a cada iteração começamos na proxima coluna
   #   ●○○○○○○ -> ○●○○○○○ e assim por diante até a ultima coluna
-  while start < len(board[0]): # enquanto ainda não chegar a ultima coluna
+  last = 0         # o ultimo player encontrado
+  encontrados = [] # sequencias encontradas
+  # por que coluna começar
+  coluna_inicial = 0
+  coluna = coluna_inicial
+  while coluna_inicial < len(board[0]): # enquanto ainda não chegar a ultima coluna
     for i in range(len(board)): # para cada linha
       if coluna == len(board[0]): # temos que verificar se o index de colunas não é maior que o numero de colunas
         break # se for vamos sair do loop
@@ -166,8 +166,40 @@ def diagonal(board: list, sequencia: int) -> bool:
         last = casa
       
       coluna += 1
-    start += 1 # passa para a proxima coluna
-    coluna = start
+    coluna_inicial += 1 # passa para a proxima coluna
+    coluna = coluna_inicial
+    # reseta as variaveis
+    encontrados = []
+    last = 0
+  
+  # verifica por colunas de direita para a esquerda
+  #   começamos na ultima coluna
+  #   a cada iteração começamos na coluna anterior
+  #   ○○○○○○● -> ○○○○○●○ e assim por diante até a ultima coluna
+  last = 0 
+  encontrados = []
+  # começar da ultima coluna
+  coluna_inicial = len(board[0]) - 1
+  coluna = coluna_inicial
+  while coluna_inicial > -1: # enquanto ainda não chegar a primeira coluna (0)
+    for i in range(len(board)): # para cada linha
+      if coluna < 0: # temos que verificar se o index de colunas é menor que 0
+        break # se for vamos sair do loop
+      casa = board[i][coluna]
+      if casa == last and casa != branco:
+        encontrados.append([i, coluna])
+
+        if len(encontrados) == sequencia: # já encontramos uma sequencia
+          return encontrados
+      else:
+        encontrados = []
+        encontrados.append([i, coluna])
+
+        last = casa
+      
+      coluna -= 1
+    coluna_inicial -= 1 # passa para a proxima coluna
+    coluna = coluna_inicial
     # reseta as variaveis
     encontrados = []
     last = 0
@@ -176,11 +208,11 @@ def diagonal(board: list, sequencia: int) -> bool:
   # a cada iteração começamos na proxima linha
   # -----1º---- | -----2º----
   # 1 - ●○○○○○○ | 1 - ○○○○○○○
-  # 2 - ○●○○○○○ | 2 - ●○○○○○○
-  start = 0  # começando da primeira linha
+  # 2 - ○●○○○○○ | 2 - ○●○○○○○
+  linha_inicial = 0  # começando da primeira linha
   coluna = 0 # e da primeira coluna
-  while start < len(board): # enquanto não for a ultima linha
-    for i in range(start, len(board)): # para cada linha
+  while linha_inicial < len(board): # enquanto não for a ultima linha
+    for i in range(linha_inicial, len(board)): # para cada linha
       if coluna == len(board[0]):
         break
       casa = board[i][coluna]
@@ -196,8 +228,38 @@ def diagonal(board: list, sequencia: int) -> bool:
         last = casa
       
       coluna += 1
-    start += 1 # proxima linha
+    linha_inicial += 1 # proxima linha
     coluna = 0 # começamos na primeira coluna
+    last = 0
+    encontrados = []
+  
+  # verificando por linhas de direita para esquerda
+  # a cada iteração começamos na proxima linha
+  # -----1º---- | -----2º----
+  # 1 - ○○○○○○● | 1 - ○○○○○○○
+  # 2 - ○○○○○●○ | 2 - ○○○○○○●
+  linha_inicial = 0  # começando da primeira linha
+  coluna_inicial = len(board[0]) - 1 # e da ultima coluna
+  coluna = coluna_inicial
+  while linha_inicial < len(board): # enquanto não for a ultima linha
+    for i in range(linha_inicial, len(board)): # para cada linha
+      if coluna < 0:
+        break
+      casa = board[i][coluna]
+      if casa == last and casa != branco:
+        encontrados.append([i, coluna])
+
+        if len(encontrados) == sequencia:
+          return encontrados
+      else:
+        encontrados = []
+        encontrados.append([i, coluna])
+
+        last = casa
+      
+      coluna -= 1
+    linha_inicial += 1 # proxima linha
+    coluna = coluna_inicial # começamos na primeira coluna
     last = 0
     encontrados = []
 
