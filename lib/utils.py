@@ -28,7 +28,7 @@ def get_int(max: int, min: int, prompt: str, error_prompt: str) -> str:
   Coleta um input de um numero inteiro valido do usuario
 
   max: o tamanho maximo do numero
-  min: o tamnanho minimo
+  min: o tamanho minimo
   prompt: a mensagem que aparece na tela na hora de coletar o input
   error_prompt: a mensagem de error
   """
@@ -57,3 +57,4 @@ def center(message:str, size=False) -> None:
   terminal_size = int(terminal_size - message_size)
 
   return (" "*int(terminal_size/2))+message+(" "*(int(terminal_size/2)))
+

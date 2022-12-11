@@ -2,40 +2,37 @@
 # 40220485
 # Desafio 1: Jogo 4 em linha 1.0
 
-# importação de modulos
-from lib.board import *
-from lib.utils import *
-from lib.color import cores
-from os import system
+# importação de modulos proprietarios
+from lib.board import * # para funções de manipulação de board
+from lib.utils import * # para funções utilitarios
+from lib.color import * # para funções de cores
+
+# modulos build-in
+from os import system      # para limpar o terminal
 from random import randint
 
 # remove qualquer coloração que já exista no seu terminal
 print(cores["end"], end="")
 
 # Informações da board
-boardLinhas      = 6
-boardColunas     = 7
+boardLinhas  = 6
+boardColunas = 7
 
 # numero de fichas seguidas necessarias para vencer o jogo
-numeroVencedor  = 4 
-vencedor        = 0 # quem venceu a partida
+sequencia_vencedora = 4 
+vencedor = 0 # quem venceu a partida
 
 jogadasPossiveis = boardLinhas * boardColunas # o numero de jogadas possivel na board
 jogadasRestantes = jogadasPossiveis # no inicio do jogo as jogadas restantes são as mesmas das jogadas possiveis
 jogadasEfetuadas = 0 
 
 jogadores = [] # vai conter os nomes do jogadores
-jogador = 0 # o jogador que está a jogar
+jogador   = 0 # o jogador que está a jogar
 
 board = criarBoard(boardLinhas, boardColunas)
 encontrados = [] # irá conter as posições vencedoras
 
-
-def printStyle(mensagem:str, cor="end") -> str:
-  """
-  imprime a mensagem centralizado e colorido
-  """
-  print(colorir(center(mensagem), cor))
+mode = 0 # modo de jogo, 1 para singleplayer e 2 para multiplayer
 
 
 def menu() -> None:
@@ -60,11 +57,22 @@ def esperar(prompt = "Pressiona <Enter> para continuar...") -> None:
   input(prompt)
 
 
+def get_mode():
+  global mode
+
+  system("clear")
+  printStyle("Modos:", "amarelo")
+  printStyle("Single Player - Solo [1]")
+  printStyle("Multi Player - Contra computador [2]")
+
+  mode = get_int(2, 1, "Em que modo deseja jogar: ", "Modo invalido. Digite 1 para single player e 2 para multiplayer.")
+
+
 def iniciar() -> None:
   """
   Inicia o jogo imprimido uma mensagem inicial na tela e resetado algumas variaveis
   """
-  global jogador, jogadasRestantes, jogadasEfetuadas, jogadores, boardColunas, boardLinhas, board
+  global jogador, jogadasRestantes, jogadasEfetuadas, jogadores, boardColunas, boardLinhas, board, encontrados
 
   jogadasRestantes = jogadasPossiveis
   jogadasEfetuadas = 0
@@ -73,9 +81,7 @@ def iniciar() -> None:
   menu()
   print()
   printBoard(board)
-  jgoadores = []
-  jogadores.append(get_str("Jogador 1 digite o seu nome: ", "Nome de jogador 1 invalido.", 3))
-  jogadores.append(get_str("Jogador 2 digite o seu nome: ", "Nome de jogador 2 invalido.", 3))
+  jogadores = []
   jogador = randint(0, 1)
   board   = criarBoard(boardLinhas, boardColunas)
   encontrados = []
@@ -88,11 +94,69 @@ def printJogador(jogador:int) -> str:
   return colorir(jogadores[jogador], coresBoard[0])
 
 
+def predict() -> int:
+  """
+  O algoritmo que decide onde o computador vai jogar
+
+  Primeiro procura uma sequencia de 3 de joga de ao lado se for horizontal ou em sima se for vertical
+  Depois procura uma sequencia de 2 e caso não encontre joga aleatoriamente
+
+  O valor retornado é a coluna
+  """
+  global board, branco
+
+  sequencias = []
+  numero_sequencias = 3
+
+  while numero_sequencias > 1:
+    if numero_sequencias:
+      # se exitir sequencia for na vertical
+      if vertical(board, numero_sequencias):
+        sequencias = vertical(board, numero_sequencias)
+        # se a linha de cima não for a primeira e a linha acima dela não estiver ocupada
+        if sequencias[0][0] > 0:
+          if board[sequencias[0][0] - 1][sequencias[0][1]] == branco:
+            return sequencias[0][1]
+      # se existir uma sequencia na horizontal
+      if horizontal(board, numero_sequencias):
+        sequencias = horizontal(board, numero_sequencias)
+        # e a coluna do lado esquerdo estiver desocupada
+        if sequencias[0][1] - 1 > -1:
+          if board[sequencias[0][0]][sequencias[0][1] - 1] == branco:
+            return sequencias[0][1] - 1 # retorna a coluna desocupada
+        if sequencias[-1][1] < boardColunas - 1:
+          if board[sequencias[-1][0]][sequencias[-1][1] + 1] == branco:
+            return sequencias[-1][1] + 1
+    numero_sequencias -= 1
+  
+  # caso não tenha encontrado uma sequencia
+  tentativas = [] # numero de colunas que já tentou jogar
+  while True:
+    coluna = 0
+    coluna = randint(0, 6) # escolhe uma coluna aleatoriamente
+
+    # para evitar um loop infinito quando fizermos mais que 2 tentativas
+    if len(tentativas) > 2:
+      # vamos verificar apartir de 0 se este já foi tentado antes
+      for i in range(6):
+        # caso não vamos tentar
+        if i not in tentativas:
+          coluna = 1
+          break
+    if coluna not in tentativas: # se a coluna não foi tentada anteriormente 
+      tentativas.append(coluna)  # adciona as tentativas
+    else: # se já foi encontrada
+      continue # pula para a proxima iteração
+
+    if verificarColuna(board, coluna) != -1: # se a coluna está livre
+      return coluna # retorna esta colua
+
+
 def proximaJogada() -> None:
   """
   Faz a proxima jogada
   """
-  global jogadasEfetuadas, jogadasRestantes, jogadores, jogador, board
+  global jogadasEfetuadas, jogadasRestantes, jogadores, jogador, board, mode
 
   system("clear")
 
@@ -109,8 +173,7 @@ def proximaJogada() -> None:
   printBoard(board)
 
   while True:
-    coluna = get_int(max = boardColunas, min = 1, prompt="Em que coluna deseja inserir a ficha: ", error_prompt="Coluna invalida") - 1
-
+    coluna = predict() if (jogador == 1 and mode == 1) else get_coluna()
     if not jogar(board, coluna, jogador):
       print("Esta coluna está cheia. Jogue novamente.")
     else:
@@ -120,6 +183,10 @@ def proximaJogada() -> None:
 
   jogadasRestantes-=1
   jogadasEfetuadas-=1
+
+
+def get_coluna():
+  return get_int(max = boardColunas, min = 1, prompt="Em que coluna deseja inserir a ficha: ", error_prompt="Coluna invalida") - 1
 
 
 def printVencedor():
@@ -139,15 +206,39 @@ def printVencedor():
   esperar()
 
 
+def single_player():
+  global jogadores, jogador, board, sequencia_vencedora, jogadasRestantes
+
+  jogadores.append(get_str("Qual é o seu nome: ", "Nome invalido!", 3)) # pergunta o nome do jogador
+  jogadores.append("Computador") # o segundo jogador é o computador
+
+  while not encontrarSequencia(board, sequencia_vencedora) and jogadasRestantes:
+    # Enquanto não existir um vencedor ou ainda há jogadas restantes
+    proximaJogada()
+
+
+def multi_player():
+  jogadores.append(get_str("Jogador 1 digite o seu nome: ", "Nome de jogador 1 invalido.", 3))
+  jogadores.append(get_str("Jogador 2 digite o seu nome: ", "Nome de jogador 2 invalido.", 3))
+
+  while not encontrarSequencia(board, sequencia_vencedora) and jogadasRestantes:
+    # Enquanto não existir um vencedor ou ainda há jogadas restantes
+    proximaJogada(get_coluna()) # faz uma jogada
+
+
 # loop principal do programa
 while True:
   iniciar()
-  # Enquanto não existir um vencedor ou ainda há jogadas restantes
-  while not encontrarSequencia(board, numeroVencedor) and jogadasRestantes:
-    proximaJogada() # faz uma jogada
-  
-  if encontrarSequencia(board, numeroVencedor):
-    encontrados = encontrarSequencia(board, numeroVencedor)
+
+  get_mode()
+  while not encontrarSequencia(board, sequencia_vencedora) and jogadasRestantes:
+    if mode == 1:
+      single_player()
+    else:
+      multi_player()
+
+  if encontrarSequencia(board, sequencia_vencedora):
+    encontrados = encontrarSequencia(board, sequencia_vencedora)
     printVencedor()
   else:
     print("Jogo terminado em impate")

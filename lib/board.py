@@ -65,20 +65,19 @@ def printBoard(board: list, encontrados=[]) -> None:
 
 def jogar(board: list, coluna: int, jogador: int) -> any:
   """
-  Joga na primeira casa na disponivel na coluna de baixo para cima
+  Joga na primeira casa disponivel na coluna de baixo para cima
 
-  O numero de jogador que será preenchido
+  O numero do jogador será preenchido
   Caso a jogado não é possivel retorna false
   """
-  for i in range(len(board)-1, -1, -1): # começamos por verificar de traz para frente
-    if board[i][coluna] == branco:
-      board[i][coluna] = jogador
-      return board
+  if verificarColuna(board, coluna) > -1:
+    board[verificarColuna(board, coluna)][coluna] = jogador
+    return True
 
   return False
 
 
-def vertical(board: list, sequencia: int) -> bool:
+def horizontal(board: list, sequencia: int) -> bool:
   """
   Verifica se existe uma jogada vencedora na vertical
 
@@ -91,7 +90,7 @@ def vertical(board: list, sequencia: int) -> bool:
   encontrados = [] # guarda as posições encontradas 
   for i in range(len(board)):
     for j in range(len(board[0])):
-      if board[i][j] == last and board[i][j] != branco: # caso a ficha seja igual a anterio e não seja um espaço em branco
+      if board[i][j] == last and board[i][j] != branco: # caso a ficha seja igual a anterior e não seja um espaço em branco
         encontrados.append([i, j]) # adciona aos encontrados
 
         if len(encontrados) == sequencia: # encontramos fichas suficientes
@@ -107,7 +106,7 @@ def vertical(board: list, sequencia: int) -> bool:
   return False
 
 
-def horizontal(board: list, sequencia: int) -> bool:
+def vertical(board: list, sequencia: int) -> bool:
   """
   Verifica se existe uma jogada vencedora na horizontal
 
@@ -271,13 +270,25 @@ def encontrarSequencia(board: list, sequencia: int) -> bool:
   Retorna as posições ou False se não existe um vencedor
   """
 
-  if vertical(board, sequencia):
-    return vertical(board, sequencia)
-  
   if horizontal(board, sequencia):
     return horizontal(board, sequencia)
+  
+  if vertical(board, sequencia):
+    return vertical(board, sequencia)
   
   if diagonal(board, sequencia):
     return diagonal(board, sequencia)
   
   return False
+
+
+def verificarColuna(board: list, coluna:int) -> int:
+  """
+  Verifica se a coluna está livre
+  Retorna a coluna se estiver ou -1 senão
+  """
+  for i in range(len(board)-1, -1, -1): # começamos por verificar de traz para frente
+    if board[i][coluna] == branco:
+      return i
+  
+  return -1

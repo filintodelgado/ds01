@@ -1,6 +1,7 @@
 # funções relacionados a coloração
 
 from os import system
+from lib.utils import center
 
 system("") # permite a utilização das cores ansi no terminal
 
@@ -20,3 +21,10 @@ def colorir(mensagem: str, cor: str):
   global cores
 
   return (cores[cor] + mensagem + cores["end"])
+
+
+def printStyle(mensagem:str, cor="end") -> str:
+  """
+  imprime a mensagem centralizado e colorido
+  """
+  print(colorir(center(mensagem), cor))
