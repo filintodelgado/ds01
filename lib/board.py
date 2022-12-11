@@ -79,8 +79,8 @@ def jogar(board: list, coluna: int, jogador: int) -> any:
 
 def horizontal(board: list, sequencia: int) -> bool:
   """
-  Verifica se existe uma jogada vencedora na vertical
-
+  Verifica se existe uma jogada vencedora na horizontal
+  ●●●●○○
   retorna false caso não encontre 
   ou um array com as posições encontradas
   """
@@ -108,16 +108,24 @@ def horizontal(board: list, sequencia: int) -> bool:
 
 def vertical(board: list, sequencia: int) -> bool:
   """
-  Verifica se existe uma jogada vencedora na horizontal
+  Verifica se existe uma jogada vencedora na vertical
 
   retorna false caso não encontre 
   ou um array com as posições encontradas
+  """
+  """
+  ○
+  ○
+  ●
+  ●
+  ●
+  ●
   """
   global branco
 
   last = 0
   encontrados = []
-  for j in range(len(board[0])):
+  for j in range(len(board[0])): # verificamos para cada coluna
     for i in range(len(board)):
       if board[i][j] == last and board[i][j] != branco:
         encontrados.append([i, j])
@@ -265,11 +273,10 @@ def diagonal(board: list, sequencia: int) -> bool:
 
 def encontrarSequencia(board: list, sequencia: int) -> bool:
   """
-  Verifica se existe uma sequencia de 'sequencia' na vertical, horizontal e diagonal
+  Verifica se existe uma sequencia de 'sequencia' na horizontal, vertical e diagonal
 
   Retorna as posições ou False se não existe um vencedor
   """
-
   if horizontal(board, sequencia):
     return horizontal(board, sequencia)
   

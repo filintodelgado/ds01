@@ -57,7 +57,10 @@ def esperar(prompt = "Pressiona <Enter> para continuar...") -> None:
   input(prompt)
 
 
-def get_mode():
+def get_mode() -> None:
+  """
+  Retorna um modo de jogo valido
+  """
   global mode
 
   system("clear")
@@ -185,16 +188,20 @@ def proximaJogada() -> None:
   jogadasEfetuadas-=1
 
 
-def get_coluna():
+def get_coluna() -> int:
+  """
+  Retorna uma coluna valida
+  """
   return get_int(max = boardColunas, min = 1, prompt="Em que coluna deseja inserir a ficha: ", error_prompt="Coluna invalida") - 1
 
 
-def printVencedor():
+def printVencedor() -> None:
   """
   Imprime o vencedor na tela
   """
   global board, encontrados, vencedor, joga
 
+  # qualquer casa nos encontrados é o vencedor
   vencedor = board[encontrados[0][0]][encontrados[0][1]]
 
   system("clear")
@@ -206,7 +213,10 @@ def printVencedor():
   esperar()
 
 
-def single_player():
+def single_player() -> None:
+  """
+  Inicia um jogo em single player (contra o computador)
+  """
   global jogadores, jogador, board, sequencia_vencedora, jogadasRestantes
 
   jogadores.append(get_str("Qual é o seu nome: ", "Nome invalido!", 3)) # pergunta o nome do jogador
@@ -217,7 +227,10 @@ def single_player():
     proximaJogada()
 
 
-def multi_player():
+def multi_player() -> None:
+  """
+  Começa um jogo em multiplayer (contra amigo)
+  """
   jogadores.append(get_str("Jogador 1 digite o seu nome: ", "Nome de jogador 1 invalido.", 3))
   jogadores.append(get_str("Jogador 2 digite o seu nome: ", "Nome de jogador 2 invalido.", 3))
 
