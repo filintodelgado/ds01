@@ -66,7 +66,7 @@ def get_mode() -> None:
   system("clear")
   printStyle("Modos:", "amarelo")
   printStyle("Single Player - Solo [1]")
-  printStyle("Multi Player - Contra computador [2]")
+  printStyle("Multi Player - Contra um amigo [2]")
 
   mode = get_int(2, 1, "Em que modo deseja jogar: ", "Modo invalido. Digite 1 para single player e 2 para multiplayer.")
 
@@ -236,7 +236,7 @@ def multi_player() -> None:
 
   while not encontrarSequencia(board, sequencia_vencedora) and jogadasRestantes:
     # Enquanto não existir um vencedor ou ainda há jogadas restantes
-    proximaJogada(get_coluna()) # faz uma jogada
+    proximaJogada() # faz uma jogada
 
 
 # loop principal do programa
